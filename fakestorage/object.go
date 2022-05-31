@@ -679,15 +679,16 @@ func (s *Server) handleRange(obj Object, r *http.Request) (ranged bool, start in
 				start, _ = strconv.ParseInt(rangeParts[0], 10, 64)
 				var err error
 				var end int64
+				length := int64(len(obj.Content))
 				if end, err = strconv.ParseInt(rangeParts[1], 10, 64); err != nil {
-					end = int64(len(obj.Content))
+					end = length - 1
 				} else if end != math.MaxInt64 {
 					end++
 				}
-				if end > int64(len(obj.Content)) {
-					end = int64(len(obj.Content))
+				if end > length-1 {
+					end = length - 1
 				}
-				return true, start, end - 1, obj.Content[start:end]
+				return true, start, end, obj.Content[start:end]
 			}
 		}
 	}
